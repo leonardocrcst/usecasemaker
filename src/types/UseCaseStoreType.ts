@@ -1,7 +1,7 @@
-import type {FlowType} from "@/types/FlowType";
+import type { FlowType } from "@/types/FlowType";
 
 export type UseCaseStoreType = {
-    title: string,
-    actor: string,
-    flow: FlowType[],
+  title: string;
+  actor: string;
+  flow: FlowType[];
 };

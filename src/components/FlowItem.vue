@@ -1,6 +1,7 @@
 <template>
   <div :class="classes">
     {{ actor }} {{ verb }} {{ description }}
+    <slot/>
   </div>
 </template>
 
@@ -15,12 +16,12 @@ export default {
   },
   computed: {
     classes() {
-      return "ms-2 me-auto" + (this.useCase ? " text-decoration-underline" : "");
+      return (
+          "ms-2 me-auto" + (this.useCase ? " text-decoration-underline" : "")
+      );
     },
-  }
-}
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
