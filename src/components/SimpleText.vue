@@ -1,8 +1,13 @@
 <template>
   <p>
     <label>
-      {{ title }}<br/>
-      <input class="form-control" type="text" v-model="value" @keyup="$emit('setContent', this.value)"/>
+      {{ title }}<br />
+      <input
+        class="form-control"
+        type="text"
+        v-model="value"
+        @keyup="$emit('setContent', this.value)"
+      />
     </label>
   </p>
 </template>
@@ -12,8 +17,8 @@ export default {
   name: "SimpleText",
   data() {
     return {
-      value: ""
-    }
+      value: "",
+    };
   },
   props: {
     title: String,

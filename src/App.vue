@@ -13,16 +13,16 @@ export default defineComponent({
   data() {
     return {
       extension: -1,
-    }
+    };
   },
   computed: {
     ...mapStores(useCaseStore),
-    ...mapState(useCaseStore, ['title', 'actor', 'flow'])
+    ...mapState(useCaseStore, ["title", "actor", "flow"]),
   },
   methods: {
-    ...mapActions(useCaseStore, ['setTitle', 'setActor', 'setFlow']),
+    ...mapActions(useCaseStore, ["setTitle", "setActor", "setFlow"]),
     addFlow(data: FlowType) {
-      this.setFlow([...this.flow, data])
+      this.setFlow([...this.flow, data]);
     },
     remFlow(id: number) {
       this.flow.splice(id, 1);
@@ -32,12 +32,17 @@ export default defineComponent({
       this.extension = id;
     },
     setExtension(content: string) {
-      this.flow[this.extension].extensions.push(content)
+      this.flow[this.extension].extensions.push(content);
       this.setFlow([...this.flow]);
       this.finishExtension();
     },
     finishExtension() {
       this.extension = -1;
+    },
+    remExtension(fluxId: number, extensionId: number) {
+      this.flow[fluxId]
+          .extensions = this.flow[fluxId].extensions.filter((item, id) => id !== extensionId)
+      this.setFlow([...this.flow])
     }
   },
 });
@@ -61,29 +66,40 @@ export default defineComponent({
         <div v-else>
           <h2>Extensão (fluxo #{{ this.extension + 1 }})</h2>
           <some-extension
-              @set-extension="addExtension"
-              @extension-cancel="this.finishExtension"/>
+              @set-extension="setExtension"
+              @extension-cancel="this.finishExtension"
+          />
         </div>
       </form>
     </div>
     <hr/>
     <div>
       <ol v-if="this.flow.length" class="list-group list-group-numbered">
-        <li v-for="(item, id) in this.flow" class="list-group-item d-flex justify-content-between align-items-start"
-            key="id">
+        <li
+            :key="fluxId"
+            v-for="(item, fluxId) in this.flow"
+            class="list-group-item d-flex justify-content-between align-items-start"
+        >
           <flow-item
               :actor="item.actor"
               :verb="item.verb"
               :description="item.description"
               :useCase="item.useCase"
-          />
-          <ol v-if="item.extensions">
-            <li v-for="(item, id) in item.extensions" key="id">
-              {{ item }}
-            </li>
-          </ol>
-          <span class="badge bg-info rounded-pill me-1 btn" @click="addExtension(id)">E</span>
-          <span class="badge bg-danger rounded-pill btn" @click="remFlow(id)">R</span>
+          >
+            <ol v-if="item.extensions" type="a">
+              <li v-for="(item, id) in item.extensions" :key="id" @click="remExtension(fluxId, id)">
+                <span>{{ item }}</span>
+              </li>
+            </ol>
+          </flow-item>
+          <span
+              class="badge bg-info rounded-pill me-1 btn"
+              @click="addExtension(fluxId)"
+          >E</span
+          >
+          <span class="badge bg-danger rounded-pill btn" @click="remFlow(fluxId)"
+          >R</span
+          >
         </li>
       </ol>
       <p v-else>Nenhum fluxo criado</p>

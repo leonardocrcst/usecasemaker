@@ -3,3 +3,12 @@ html, body {
     min-height: 100%;
     font-family: "Noto Sans", sans-serif;
 }
+
+ol li ol li:hover {
+    color: red;
+    cursor: pointer;
+}
+
+ol li ol li:hover span::after {
+    content: "🗑️"
+}
