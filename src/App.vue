@@ -7,12 +7,14 @@ import {mapActions, mapState, mapStores} from "pinia";
 import {useCaseStore} from "@/stores/useCaseStore";
 import type {FlowType} from "@/types/FlowType";
 import SomeExtension from "@/components/SomeExtension.vue";
+import Conclude from "@/helpers/Conclude";
 
 export default defineComponent({
   components: {SomeExtension, FlowItem, SomeAction, SimpleText},
   data() {
     return {
       extension: -1,
+      finished: ""
     };
   },
   computed: {
@@ -20,7 +22,8 @@ export default defineComponent({
     ...mapState(useCaseStore, ["title", "actor", "flow"]),
   },
   methods: {
-    ...mapActions(useCaseStore, ["setTitle", "setActor", "setFlow"]),
+    Conclude,
+    ...mapActions(useCaseStore, ["setTitle", "setActor", "setFlow", "reset"]),
     addFlow(data: FlowType) {
       this.setFlow([...this.flow, data]);
     },
@@ -32,8 +35,11 @@ export default defineComponent({
       this.extension = id;
     },
     setExtension(content: string) {
-      this.flow[this.extension].extensions.push(content);
-      this.setFlow([...this.flow]);
+      if (this.extension >= 0) {
+        const flow = [...this.flow]
+        flow[this.extension].extensions.push(content);
+        this.setFlow(flow);
+      }
       this.finishExtension();
     },
     finishExtension() {
@@ -43,6 +49,11 @@ export default defineComponent({
       this.flow[fluxId]
           .extensions = this.flow[fluxId].extensions.filter((item, id) => id !== extensionId)
       this.setFlow([...this.flow])
+    },
+    finalize() {
+      this.finished = ""
+      this.finished = Conclude()
+      this.flow = []
     }
   },
 });
@@ -50,14 +61,20 @@ export default defineComponent({
 
 <template>
   <header class="container">
-    <h1>UseCase Maker</h1>
-    <p>Facilita a criação de casos de uso.</p>
+    <h1 class="mt-4">UseCase Maker</h1>
+    <p>Auxilia na elaboração de casos de uso.</p>
   </header>
   <main class="container">
-    <div>
-      <simple-text title="Título" @set-content="this.setTitle"/>
-      <simple-text title="Ator principal" @set-content="this.setActor"/>
-      <hr/>
+    <div class="row g-2">
+      <div class="col-12 col-md-8">
+        <simple-text title="Título" @set-content="this.setTitle"/>
+      </div>
+      <div class="col-12 col-md-4">
+        <simple-text title="Ator principal" @set-content="this.setActor"/>
+      </div>
+      <div class="col-12">
+        <hr/>
+      </div>
       <form>
         <div v-if="this.extension < 0">
           <h2>Fluxo normal</h2>
@@ -73,7 +90,8 @@ export default defineComponent({
       </form>
     </div>
     <hr/>
-    <div>
+    <div class="row g-2">
+    <div class="col-12 col-md-9 col-lg-10">
       <ol v-if="this.flow.length" class="list-group list-group-numbered">
         <li
             :key="fluxId"
@@ -103,6 +121,14 @@ export default defineComponent({
         </li>
       </ol>
       <p v-else>Nenhum fluxo criado</p>
+    </div>
+      <div class="col-12 col-md-3 col-lg-2 d-flex justify-content-center align-items-center">
+        <button class="btn btn-primary" @click="finalize()">Finalizar</button>
+      </div>
+    </div>
+    <div v-if="finished.length">
+      <hr/>
+      <textarea class="form-control" readonly rows="12">{{finished}}</textarea>
     </div>
   </main>
 </template>

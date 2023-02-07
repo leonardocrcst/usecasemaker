@@ -21,5 +21,10 @@ export const useCaseStore = defineStore("useCaseStore", {
     setFlow(flow: FlowType[]) {
       this.flow = flow;
     },
+    reset() {
+      this.title = ""
+      this.actor = ""
+      this.flow = []
+    }
   },
 });
