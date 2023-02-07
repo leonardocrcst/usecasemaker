@@ -1,6 +1,6 @@
 <template>
   <p>
-    <label>
+    <label class="d-block">
       {{ title }}<br />
       <input
         class="form-control"
